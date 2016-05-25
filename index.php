@@ -8,6 +8,9 @@ class Image2txt
 {
     const SINGLE_WORD_WIDTH = 8;
     const WORD_COLOR_VALUE = 4278190080;
+    const BG_COLOR_VALUE = 4294307277;
+
+    private $aNoiseList = [];
 
     /**
      * Get object of the image.
@@ -30,6 +33,11 @@ class Image2txt
             foreach (range(0, $this->height - 1) as $y) {
                 $iColorValue = $this->image->pickColor($x, $y, 'int');
                 $aMatrix[$x][$iColorValue][] = $y;
+
+                // get noise point.
+                if ($iColorValue !== self::BG_COLOR_VALUE and $iColorValue !== self::WORD_COLOR_VALUE) {
+                    $this->aNoiseList[] = $x . ',' . $y;
+                }
             }
         }
 
@@ -50,8 +58,12 @@ class Image2txt
         foreach ($this->aStandard as $iNumber => $aStandardMatrix) {
             $aDiff = array_diff($aTarget, $aStandardMatrix);
 
-            if (count($aDiff) < 2) {
+            if (empty($aDiff)) {
                 return $iNumber;
+            } else {
+                if ($aDiff === array_intersect($this->aNoiseList, $aDiff)) {
+                    return $iNumber;
+                }
             }
         }
     }

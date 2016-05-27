@@ -1,6 +1,6 @@
 # img2txt
 
-Translate image of port into text on the [page](http://ip.zdaye.com/).
+Get the port information from images on the [page](http://ip.zdaye.com/).
 
 # Example
 
